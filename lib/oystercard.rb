@@ -8,7 +8,6 @@ class OysterCard
   # attr_reader can be turned off for this (only opened for test)
   attr_reader :balance
 
-
   # default constants (defined in one line)
   MIN_BAL, MAX_BAL = 0, 90
 
@@ -28,7 +27,9 @@ class OysterCard
   # touch_in method take station object in and starts a journey
   # throws error if balance is less than MIN_FARE
   def touch_in(station)
-    deduct(@journey_log.implement_penalty) if @journey_log.in_journey?
+    # deduct(@journey_log.implement_penalty) if @journey_log.in_journey?
+    # Just realised that same could be implemented using journeylog.finish
+    deduct(@journey_log.finish) if @journey_log.in_journey?
     raise 'Insufficient balance' if @balance < 1 #get this min fare from journey class
     @journey_log.start(station)
   end

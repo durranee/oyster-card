@@ -17,18 +17,21 @@ class JourneyLog
     @entry_station = station
   end
 
-  def implement_penalty
-    @history << log_journey()
-    @journey.fare(@entry_station, @exit_station)
-  end
+# redundant method as finish() can achieve the same
+# when not given arguements
+  # def implement_penalty
+  #   @history << log_journey()
+  #   @journey.fare(@entry_station, @exit_station)
+  # end
 
   def finish(station = nil)
     @exit_station = station
-    fare = @journey.fare(@entry_station, @exit_station)
+    # fare = @journey.fare(@entry_station, @exit_station)
     @history << log_journey
     # reset all journey related stuff to default as it's completed and stored
     reset_journey
-    fare # return fare
+    # fare # return fare
+    @history.last[:fare]
   end
 
   def in_journey?
