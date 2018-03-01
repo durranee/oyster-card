@@ -1,56 +1,49 @@
-require_relative 'journey'
+# Journey_Log class
+# Responsible for creating and storing journey info (logs)
+# Journey class on other hand will calculate fare and take care of penalty etc
 
 class JourneyLog
-  attr_reader :entry_station, :exit_station, :penalty_amt
+  attr_reader :entry_station, :exit_station
 
   def initialize
-    @journey_class = Journey
-    @mid_journey = false # Tells you if you're on a journey
-    @history = [] # Array to store entire travel history
-    @curr_journey = {} # Hash to store current journey details
-    @penalty_amt = 0
-  end
-
-  def start(station = nil)
-    # Check if we need to charge a penalty
-    if in_journey?
-      p 'Charged penalty fare for incomplete journey.'
-      @history << @curr_journey.dup
-      @penalty_amt = Journey::PENALTY
-      @mid_journey = false
-      @history.last[:fare] = @penalty_amt #Update entry for prev incomplete journey
-    else
-      @penalty_amt = 0
-    end
-
-    # Start real journey
-    @mid_journey = true
-    @entry_station = station
-    @journey = @journey_class.new(@entry_station)
-    @curr_journey[:entry] = station
-  end
-
-  def stop(station = nil)
-    @exit_station = station
-    @curr_journey[:exit] = station
-    @journey.finish_journey(@exit_station)
-    @curr_journey[:fare] = @journey.correct_fare
-    @history << @curr_journey.dup
-    reset_journey
-    @curr_journey[:fare]
-  end
-
-private
-
-  def reset_journey
+    @journey = Journey.new()
     @mid_journey = false
     @entry_station = @exit_station = nil
-    @curr_journey[:entry] = nil
-    @curr_journey[:exit] = nil
+    @history = []
+  end
+
+# start journey methods
+  def start(station = nil)
+    @mid_journey = true
+    @entry_station = station
+  end
+
+  def implement_penalty
+    @history << log_journey()
+    @journey.fare(@entry_station, @exit_station)
+  end
+
+  def finish(station = nil)
+    @exit_station = station
+    fare = @journey.fare(@entry_station, @exit_station)
+    @history << log_journey
+    # reset all journey related stuff to default as it's completed and stored
+    reset_journey
+    fare # return fare
   end
 
   def in_journey?
     @mid_journey
+  end
+
+  private
+  def reset_journey
+    @mid_journey = false
+    @entry_station = @exit_station = nil
+  end
+
+  def log_journey
+    { from: @entry_station, to: exit_station, fare: @journey.fare(@entry_station, @exit_station) }
   end
 
 end

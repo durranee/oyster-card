@@ -1,11 +1,19 @@
-class OysterCard
-  attr_reader :completed_journeys, :balance
+require_relative 'journey_log'
+require_relative 'journey'
+require_relative 'station'
 
+class OysterCard
+  attr_reader :balance
+
+  # default constants (defined in one line)
+  MIN_BAL = 0
   MAX_BAL = 90
 
-  def initialize(journey_log_class = JourneyLog)
-    @journey_log = journey_log_class.new()
-    @balance = 0
+  def initialize(balance = MIN_BAL, journey_log = JourneyLog.new)
+    @balance = balance
+    # @completed_journeys = []
+    @journey_log = journey_log
+
   end
 
   # topup method tops up the oystercard with amount given
@@ -16,21 +24,16 @@ class OysterCard
   end
 
   # touch_in method take station object in and starts a journey
-  # throws error if balance is less than Journey::MIN_BAL (£1)
+  # throws error if balance is less than MIN_FARE
   def touch_in(station)
-    # Check if balance is sufficient
-    raise 'Insufficient balance' if @balance < Journey::MIN_FARE
-    # Initiate the Journey Log #start method (creates a new Journey object)
+    deduct(@journey_log.implement_penalty) if @journey_log.in_journey?
+    raise 'Insufficient balance' if @balance < 1 #get this min fare from journey class
     @journey_log.start(station)
-    # Deduct the penalty fare if applicable
-    deduct(@journey_log.penalty_amt)
   end
 
-  # touch_out takes station object as an argument
   def touch_out(station)
-    # correct_fare is out put by the Journey Log #stop method
-    correct_fare = @journey_log.stop(station)
-    deduct(correct_fare)
+    fare = @journey_log.finish(station)
+    deduct(fare)
   end
 
   private
