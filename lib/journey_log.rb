@@ -3,7 +3,6 @@
 # Journey class on other hand will calculate fare and take care of penalty etc
 
 class JourneyLog
-  attr_reader :entry_station, :exit_station
 
   def initialize
     @journey = Journey.new()
@@ -36,14 +35,19 @@ class JourneyLog
     @mid_journey
   end
 
+  def journeys
+    @history
+  end
+
   private
+
   def reset_journey
     @mid_journey = false
     @entry_station = @exit_station = nil
   end
 
   def log_journey
-    { from: @entry_station, to: exit_station, fare: @journey.fare(@entry_station, @exit_station) }
+    { from: @entry_station, to: @exit_station, fare: @journey.fare(@entry_station, @exit_station) }
   end
 
 end

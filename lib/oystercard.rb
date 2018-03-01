@@ -3,15 +3,17 @@ require_relative 'journey'
 require_relative 'station'
 
 class OysterCard
+
+  # balance don't need to be accessed from outside
+  # attr_reader can be turned off for this (only opened for test)
   attr_reader :balance
 
+
   # default constants (defined in one line)
-  MIN_BAL = 0
-  MAX_BAL = 90
+  MIN_BAL, MAX_BAL = 0, 90
 
   def initialize(balance = MIN_BAL, journey_log = JourneyLog.new)
     @balance = balance
-    # @completed_journeys = []
     @journey_log = journey_log
 
   end
@@ -36,6 +38,9 @@ class OysterCard
     deduct(fare)
   end
 
+  def journeys
+    @journey_log.journeys.each {|journey| puts journey}
+  end
   private
 
   def deduct(correct_fare)

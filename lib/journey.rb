@@ -2,14 +2,14 @@
 # This takes care of all journey related things and should return journey info
 # when referred to
 class Journey
-  PENALTY = 6
-  MIN_FARE = 1
+  PENALTY, MIN_FARE = 6, 1
 
   def initialize
   end
 
   def fare(entry_station, exit_station)
-    entry_station.nil? || exit_station.nil? ? PENALTY : MIN_FARE
+    # actual_fare = MIN_FARE + (entry_station.zone-exit_station.zone).abs
+    entry_station.nil? || exit_station.nil? ? PENALTY : MIN_FARE + (entry_station.zone-exit_station.zone).abs
   end
 
 end
