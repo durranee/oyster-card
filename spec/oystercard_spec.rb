@@ -35,17 +35,17 @@ describe OysterCard do
     #   expect(oystercard).to respond_to(:deduct).with(1).arguments
     # end
 
-    it 'should deduct fare from balance' do
-      oystercard.topup(MIN_FARE)
+    it 'should deduct min fare from balance when same zones' do
+      oystercard.topup(10)
       oystercard.touch_in(barking)
-      oystercard.touch_out(aldgate)
-      expect(oystercard.balance).to eq(0)
+      oystercard.touch_out(barking)
+      expect(oystercard.balance).to eq(9)
     end
 
-    it 'should deduct correct fare (MIN_FARE) when touched in & touched out' do
-      oystercard.topup(MAX_BALANCE)
+    it 'should deduct correct fare (z 1-4) fare: 4 when touched in & touched out' do
+      oystercard.topup(10)
       oystercard.touch_in(barking)
-      expect { oystercard.touch_out(aldgate) }.to change{ oystercard.balance }.by(-MIN_FARE)
+      expect { oystercard.touch_out(aldgate) }.to change{ oystercard.balance }.by(-4)
     end
 
     it 'should deduct PENALTY fare when not touched in before touched out ' do
@@ -70,17 +70,6 @@ describe OysterCard do
   describe '#touch_out' do
     it 'shoud respond to touch_out' do
       expect(oystercard).to respond_to(:touch_out).with(1).arguments
-    end
-
-    it 'completed_journeys should be empty in the start' do
-      expect(oystercard.completed_journeys).to eq([])
-    end
-
-    it 'should push history hash to completed_journeys' do
-      oystercard.topup(MIN_FARE)
-      oystercard.touch_in(barking)
-      oystercard.touch_out(aldgate)
-      expect(oystercard.completed_journeys).to eq([{ from: barking, to: aldgate, fare: MIN_FARE}])
     end
 
     it 'should deduct PENALTY fare when touch in twice ' do

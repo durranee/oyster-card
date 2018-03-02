@@ -1,8 +1,10 @@
 # Journey_Log class
 # Responsible for creating and storing journey info (logs)
 # Journey class on other hand will calculate fare and take care of penalty etc
+require_relative 'journey'
 
 class JourneyLog
+  attr_reader :history, :mid_journey, :entry_station, :exit_station # turn them all off after tests
 
   def initialize
     @journey = Journey.new()
@@ -17,21 +19,11 @@ class JourneyLog
     @entry_station = station
   end
 
-# redundant method as finish() can achieve the same
-# when not given arguements
-  # def implement_penalty
-  #   @history << log_journey()
-  #   @journey.fare(@entry_station, @exit_station)
-  # end
-
   def finish(station = nil)
     @exit_station = station
-    # fare = @journey.fare(@entry_station, @exit_station)
     @history << log_journey
-    # reset all journey related stuff to default as it's completed and stored
     reset_journey
-    # fare # return fare
-    @history.last[:fare]
+    @history.last[:fare] # returns fare
   end
 
   def in_journey?
